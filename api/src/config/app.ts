@@ -1,9 +1,9 @@
 import express from 'express'
 import cors from 'cors'
-import 'module-alias/register'
+import mongoose from 'mongoose'
 
-import IndexRoute from '@routes/index.routes'
-// import { config } from './vars'
+import IndexRoute from '../routes/index.routes'
+import { config } from './vars'
 
 class App {
   public express: express.Application

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 
-import S3 from '@integrations/s3'
+import S3 from '../integrations/s3'
 
 class ImageControllers {
   public uploadImage = async (req: Request, res: Response) => {
