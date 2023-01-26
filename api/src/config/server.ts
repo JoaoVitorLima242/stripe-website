@@ -1,5 +1,5 @@
-import app from './app'
-import { config } from './vars'
+import app from '@config/app'
+import { config } from '@config/vars'
 
 const PORT = config.PORT
 

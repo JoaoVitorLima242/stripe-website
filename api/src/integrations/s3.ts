@@ -1,7 +1,7 @@
 import S3, { GetObjectRequest, PutObjectRequest } from 'aws-sdk/clients/s3'
 import fs from 'fs'
 
-import { config } from '../config/vars'
+import { config } from '@config/vars'
 
 class S3Integration {
   private s3: S3

@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import multer from 'multer'
 
-import ImageControllers from '../controllers/images'
+import ImageControllers from '@controllers/images'
 
 const upload = multer({ dest: './uploads/' })
 const routes = Router()
