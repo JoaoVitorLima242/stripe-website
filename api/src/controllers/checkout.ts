@@ -17,7 +17,6 @@ class CheckoutControllers {
         .status(400)
         .json({ error: 'missing required session parameters' })
     }
-
     try {
       const session = await stripe.createCheckoutSession(
         lineItems,

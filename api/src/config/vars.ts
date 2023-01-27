@@ -9,6 +9,7 @@ export const config: {
   AWS_SECRET_ACCESS: string
   AWS_BUCKET_NAME: string
   AWS_BUCKET_REGION: string
+  STRIPE_PUBLIC_KEY: string
   STRIPE_SECRET_KEY: string
   APP_URL: string
 } = {
@@ -18,6 +19,7 @@ export const config: {
   AWS_SECRET_ACCESS: String(process.env.AWS_SECRET_KEY),
   AWS_BUCKET_NAME: String(process.env.AWS_BUCKET_NAME),
   AWS_BUCKET_REGION: String(process.env.AWS_BUCKET_REGION),
+  STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY || '',
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || '',
-  APP_URL: process.env.STRIPE_SECRET_KEY || 'http://localhost:3000/',
+  APP_URL: process.env.APP_URL || 'http://localhost:3000/',
 }
