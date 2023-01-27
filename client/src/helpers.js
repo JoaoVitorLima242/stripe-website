@@ -8,19 +8,16 @@ export async function fetchFromAPI(endpoint, opts) {
   const { method, body } = { method: 'POST', body: null, ...opts };
 
   const user = {};
-  const token = user && (await user.getIdToken());
+  // const token = user && (await user.getIdToken());
   const res = await fetch(`${API}/${endpoint}`, {
     method,
     ...(body && { body: JSON.stringify(body) }),
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+      // Authorization: `Bearer ${token}`
     },
   });
 
-  if (res.status === 200) {
-    return res.json();
-  } else {
-    throw new Error(res.statusText);
-  }
+  return res.json();
+  
 }

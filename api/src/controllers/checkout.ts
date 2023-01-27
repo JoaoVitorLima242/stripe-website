@@ -12,6 +12,8 @@ class CheckoutControllers {
   ) => {
     const { lineItems, customerEmail } = req.body
 
+    console.log(lineItems, customerEmail)
+
     if (!lineItems || !customerEmail) {
       return res
         .status(400)
