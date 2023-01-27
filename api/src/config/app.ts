@@ -1,9 +1,8 @@
 import express from 'express'
 import cors from 'cors'
-import mongoose from 'mongoose'
 
-import IndexRoute from '../routes/index.routes'
-import { config } from './vars'
+import IndexRoutes from '../routes/index.routes'
+import CheckoutRoutes from '../routes/checkout.routes'
 
 class App {
   public express: express.Application
@@ -24,7 +23,8 @@ class App {
   private database() {}
 
   private routes() {
-    this.express.use('/', IndexRoute)
+    this.express.use('/', IndexRoutes)
+    this.express.use('/checkout', CheckoutRoutes)
   }
 }
 

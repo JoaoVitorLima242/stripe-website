@@ -1,13 +1,13 @@
-import S3, { GetObjectRequest, PutObjectRequest } from 'aws-sdk/clients/s3'
+import S3Api, { GetObjectRequest, PutObjectRequest } from 'aws-sdk/clients/s3'
 import fs from 'fs'
 
 import { config } from '../config/vars'
 
-class S3Integration {
-  private s3: S3
+class S3 {
+  private s3: S3Api
 
   constructor() {
-    this.s3 = new S3({
+    this.s3 = new S3Api({
       region: config.AWS_BUCKET_REGION,
       accessKeyId: config.AWS_ACCESS_ID,
       secretAccessKey: config.AWS_SECRET_ACCESS,
@@ -38,4 +38,4 @@ class S3Integration {
   }
 }
 
-export default new S3Integration()
+export default new S3()
