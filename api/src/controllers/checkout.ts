@@ -49,8 +49,10 @@ class CheckoutControllers {
         const session = event.data.object
         console.log('Event data', session)
       }
-    } catch (error: any) {
-      return res.status(400).json({ error: `Webhook error ${error.message}` })
+    } catch (error) {
+      if (error instanceof Error) {
+        return res.status(400).json({ error: `Webhook error ${error.message}` })
+      }
     }
   }
 
@@ -58,9 +60,13 @@ class CheckoutControllers {
     req: RequestWithBody<PaymentIntentBody>,
     res: Response,
   ) => {
-    const { cartItems, description, reveiptEmail, shipping } = req.body
-
     try {
+      const { cartItems, description, reveiptEmail, shipping } = req.body
+
+      if (!cartItems || !description || !reveiptEmail || !shipping) {
+        throw new Error('Missing required params!')
+      }
+
       const amount = calculateOrderAmount(cartItems)
 
       const paymentIntent = await stripe.createPaymentIntent(
@@ -72,8 +78,7 @@ class CheckoutControllers {
 
       return res.status(200).json({ clientSecret: paymentIntent.client_secret })
     } catch (error) {
-      console.log(error)
-      res
+      return res
         .status(400)
         .json({ error: 'An error occured, unable to create payment intent' })
     }
