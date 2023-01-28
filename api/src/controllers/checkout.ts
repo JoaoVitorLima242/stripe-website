@@ -45,10 +45,12 @@ class CheckoutControllers {
     try {
       const event = stripe.webhookConstructEvent(req.rawBody, sig)
 
-      if (event.type === 'checkout.session.completed') {
+      if (stripe.webhookHandlers[event.type]) {
         const session = event.data.object
-        console.log('Event data', session)
+        stripe.webhookHandlers[event.type](session)
       }
+
+      res.status(200).json({ status: event.type })
     } catch (error) {
       if (error instanceof Error) {
         return res.status(400).json({ error: `Webhook error ${error.message}` })

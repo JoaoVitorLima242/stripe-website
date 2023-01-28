@@ -4,16 +4,27 @@ import { config } from '../config/vars'
 
 export type LineItems = StripeApi.Checkout.SessionCreateParams.LineItem[]
 export type Shipping = StripeApi.PaymentIntentCreateParams.Shipping
-
+export type EventDataObj = StripeApi.Event.Data.Object
 class Stripe {
   private stripe: StripeApi
   private domainUrl: string
+  public webhookHandlers: {
+    [key: string]: (data?: EventDataObj) => void
+  }
 
   constructor() {
     this.stripe = new StripeApi(config.STRIPE_SECRET_KEY, {
       apiVersion: '2022-11-15',
     })
     this.domainUrl = config.APP_URL
+    this.webhookHandlers = {
+      'checkout.session.completed': (data?: EventDataObj) =>
+        console.log('Checkout completed successfully', data),
+      'payment_intent.succeeded': (data?: EventDataObj) =>
+        console.log('Payment succeeded', data),
+      'payment_intent.payment_failed': (data?: EventDataObj) =>
+        console.log('Payment failed', data),
+    }
   }
 
   public createCheckoutSession = (
