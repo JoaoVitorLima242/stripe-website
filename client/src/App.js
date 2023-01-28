@@ -6,6 +6,8 @@ import SingleProduct from './components/single-product/single-product';
 import CartPage from './components/pages/cart-page/cart-page';
 import Checkout from './components/checkout/checkout';
 import './App.scss';
+import Success from './components/checkout/success';
+import Canceled from './components/checkout/canceled';
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
         <Route path='/product/:id' component={SingleProduct} />
         <Route path='/cart' component={CartPage} />
         <Route path='/checkout' component={Checkout} />
+        <Route path='/success' component={Success} />
+        <Route path='/canceled' component={Canceled} />
         <Route path='*' component={NotFound} />
       </Switch>
     </div>
