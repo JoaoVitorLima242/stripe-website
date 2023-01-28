@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import {
     CardNumberElement,
@@ -9,11 +9,45 @@ import {
 } from '@stripe/react-stripe-js'
 import { fetchFromAPI } from "../../../helpers"; 
 
-const CustomCheckout = () => {
+const CustomCheckout = ({shipping, cartItems, history: { push }}) => {
     const [processing, setProcessing] = useState(false)
     const [error, setError] = useState(null)
+    const [clientSecret, setClientSecret] = useState(null)
 
     const elements = useElements()
+    const stripe = useStripe()
+
+    useEffect(() => {
+        const items = cartItems.map(item => ({
+            price: item.price,
+            quantity: item.quantity
+        }))
+
+        if (shipping) {
+            const body = {
+              cartItems: items,
+              shipping: {
+                name: shipping.name,
+                address: {
+                  line1: shipping.address
+                }
+              },
+              description: 'payment intent for nomad shop',
+              receiptEmail: shipping.email,
+            }
+      
+            const customCheckout = async () => {
+              const { clientSecret, id } = await fetchFromAPI('checkout/payment-intent', {
+                body
+              });
+      
+              setClientSecret(clientSecret)
+            //   setPaymentIntentId(id);
+            }
+      
+            customCheckout();
+          }
+    }, [shipping, cartItems])
 
     const cardHandlerChange = e => {
         const {error} = e
@@ -21,7 +55,24 @@ const CustomCheckout = () => {
         setError(error || '')
     }
 
-    const checkoutHandler = () => {}
+    const checkoutHandler = async () => {
+        setProcessing(true)
+        console.log(clientSecret)
+        const payload = await stripe.confirmCardPayment(clientSecret, {
+            payment_method: {
+                card: elements.getElement(CardNumberElement)
+            }
+        })
+
+        if (payload.error) {
+            setError('Payment Failed: ' + payload.error.message)
+            setProcessing(false)
+            return
+        }
+        
+        push('/success')
+
+    }
 
     const cardStyle = {
         style: {
@@ -81,4 +132,4 @@ const CustomCheckout = () => {
     )
 }
 
-export default CustomCheckout
+export default withRouter(CustomCheckout)

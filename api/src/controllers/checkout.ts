@@ -9,7 +9,7 @@ type createCheckoutBody = { lineItems: LineItems; customerEmail: string }
 type PaymentIntentBody = {
   cartItems: cartItem[]
   description: string
-  reveiptEmail: string
+  receiptEmail: string
   shipping: Shipping
 }
 class CheckoutControllers {
@@ -61,9 +61,9 @@ class CheckoutControllers {
     res: Response,
   ) => {
     try {
-      const { cartItems, description, reveiptEmail, shipping } = req.body
+      const { cartItems, description, receiptEmail, shipping } = req.body
 
-      if (!cartItems || !description || !reveiptEmail || !shipping) {
+      if (!cartItems || !description || !receiptEmail || !shipping) {
         throw new Error('Missing required params!')
       }
 
@@ -72,12 +72,13 @@ class CheckoutControllers {
       const paymentIntent = await stripe.createPaymentIntent(
         amount,
         description,
-        reveiptEmail,
+        receiptEmail,
         shipping,
       )
 
       return res.status(200).json({ clientSecret: paymentIntent.client_secret })
     } catch (error) {
+      console.log(error)
       return res
         .status(400)
         .json({ error: 'An error occured, unable to create payment intent' })

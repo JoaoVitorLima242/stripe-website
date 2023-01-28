@@ -4,15 +4,20 @@ import Layout from '../shared/layout'
 import './checkout.styles.scss'
 import StripeCheckout from './stripe-checkout/stripe-checkout'
 import ShippingAddress from './custom-checkout.jsx/shipping-address'
+import CustomCheckout from './custom-checkout.jsx/custom-checkout'
 
 const Checkout = () => {
-    const {itemCount, total} = useContext(CartContext)
+    const {itemCount, total, cartItems} = useContext(CartContext)
     const [shipping, setShipping] = useState(null)
 
     const addressShow = {
         display: (shipping ? 'none' : 'block') 
     }
 
+    const cardShow = {
+        display: (!shipping ? 'none' : 'block') 
+    }
+ 
     return (
         <Layout>
             <div className='checkout'>
@@ -22,8 +27,13 @@ const Checkout = () => {
                 <div style={addressShow}>
                     <ShippingAddress setShipping={setShipping}/>
                 </div>
+                <div style={cardShow}>
+                    <CustomCheckout 
+                        shipping={shipping} 
+                        cartItems={cartItems}
+                    />
+                </div>
             </div>
-
             {/* <StripeCheckout /> */}
         </Layout>
     )
