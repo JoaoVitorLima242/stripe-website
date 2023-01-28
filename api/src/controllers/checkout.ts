@@ -1,13 +1,20 @@
 import { Request, Response } from 'express'
-import stripe, { LineItems } from '../services/stripe'
+import stripe, { LineItems, Shipping } from '../services/stripe'
+import { RequestWithBody } from '../@types/express'
+import { calculateOrderAmount } from '../utils/calculates'
+import { cartItem } from '../@types/cartItem'
 
-interface CreateCheckoutSessionReq extends Request {
-  body: { lineItems: LineItems; customerEmail: string }
+type createCheckoutBody = { lineItems: LineItems; customerEmail: string }
+
+type PaymentIntentBody = {
+  cartItems: cartItem[]
+  description: string
+  reveiptEmail: string
+  shipping: Shipping
 }
-
 class CheckoutControllers {
   public createCheckoutSession = async (
-    req: CreateCheckoutSessionReq,
+    req: RequestWithBody<createCheckoutBody>,
     res: Response,
   ) => {
     const { lineItems, customerEmail } = req.body
@@ -32,7 +39,7 @@ class CheckoutControllers {
     }
   }
 
-  public webhook(req: Request, res: Response) {
+  public webhook = (req: Request, res: Response) => {
     const sig = req.headers['stripe-signature'] as string
 
     try {
@@ -44,6 +51,31 @@ class CheckoutControllers {
       }
     } catch (error: any) {
       return res.status(400).json({ error: `Webhook error ${error.message}` })
+    }
+  }
+
+  public paymentIntent = async (
+    req: RequestWithBody<PaymentIntentBody>,
+    res: Response,
+  ) => {
+    const { cartItems, description, reveiptEmail, shipping } = req.body
+
+    try {
+      const amount = calculateOrderAmount(cartItems)
+
+      const paymentIntent = await stripe.createPaymentIntent(
+        amount,
+        description,
+        reveiptEmail,
+        shipping,
+      )
+
+      return res.status(200).json({ clientSecret: paymentIntent.client_secret })
+    } catch (error) {
+      console.log(error)
+      res
+        .status(400)
+        .json({ error: 'An error occured, unable to create payment intent' })
     }
   }
 }

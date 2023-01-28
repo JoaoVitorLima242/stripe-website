@@ -3,6 +3,7 @@ import StripeApi from 'stripe'
 import { config } from '../config/vars'
 
 export type LineItems = StripeApi.Checkout.SessionCreateParams.LineItem[]
+export type Shipping = StripeApi.PaymentIntentCreateParams.Shipping
 
 class Stripe {
   private stripe: StripeApi
@@ -36,6 +37,22 @@ class Stripe {
       signture,
       config.STRIPE_WEB_HOOK_SECRET,
     )
+  }
+
+  public createPaymentIntent = (
+    amount: number,
+    description: string,
+    receiptEmail: string,
+    shipping: Shipping,
+  ) => {
+    return this.stripe.paymentIntents.create({
+      amount,
+      currency: 'BRL',
+      description,
+      payment_method_types: ['card'],
+      receipt_email: receiptEmail,
+      shipping,
+    })
   }
 }
 

@@ -5,5 +5,6 @@ const routes = Router()
 
 routes.post('/create-session', CheckoutControllers.createCheckoutSession)
 routes.post('/webhook', CheckoutControllers.webhook)
+routes.post('/payment-intent', CheckoutControllers.paymentIntent)
 
 export default routes
