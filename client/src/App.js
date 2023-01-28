@@ -9,6 +9,7 @@ import './App.scss';
 import Success from './components/checkout/success';
 import Canceled from './components/checkout/canceled';
 import SignUp from './components/sign-up/sign-up';
+import SignIn from './components/sign-in/sign-in';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path='/success' component={Success} />
         <Route path='/canceled' component={Canceled} />
         <Route path='/sign-up' component={SignUp} />
+        <Route path='/sign-in' component={SignIn} />
         <Route path='*' component={NotFound} />
       </Switch>
     </div>
