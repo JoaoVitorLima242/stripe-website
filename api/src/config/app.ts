@@ -15,7 +15,11 @@ class App {
   }
 
   private middlewares() {
-    this.express.use(express.json())
+    this.express.use(
+      express.json({
+        verify: (req, res, buffer) => (req['rawBody'] = buffer),
+      }),
+    )
     this.express.use(cors())
     this.express.use(express.static('uploads'))
   }

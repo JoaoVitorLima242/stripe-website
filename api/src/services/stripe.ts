@@ -29,6 +29,14 @@ class Stripe {
       shipping_address_collection: { allowed_countries: ['GB', 'US'] },
     })
   }
+
+  public webhookConstructEvent = (rawBody: Buffer, signture: string) => {
+    return this.stripe.webhooks.constructEvent(
+      rawBody,
+      signture,
+      config.STRIPE_WEB_HOOK_SECRET,
+    )
+  }
 }
 
 export default new Stripe()

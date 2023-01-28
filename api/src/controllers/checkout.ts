@@ -12,8 +12,6 @@ class CheckoutControllers {
   ) => {
     const { lineItems, customerEmail } = req.body
 
-    console.log(lineItems, customerEmail)
-
     if (!lineItems || !customerEmail) {
       return res
         .status(400)
@@ -31,6 +29,21 @@ class CheckoutControllers {
       res
         .status(400)
         .json({ error: 'An error occured, unable to create session' })
+    }
+  }
+
+  public webhook(req: Request, res: Response) {
+    const sig = req.headers['stripe-signature'] as string
+
+    try {
+      const event = stripe.webhookConstructEvent(req.rawBody, sig)
+
+      if (event.type === 'checkout.session.completed') {
+        const session = event.data.object
+        console.log('Event data', session)
+      }
+    } catch (error: any) {
+      return res.status(400).json({ error: `Webhook error ${error.message}` })
     }
   }
 }

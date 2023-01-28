@@ -11,6 +11,7 @@ export const config: {
   AWS_BUCKET_REGION: string
   STRIPE_PUBLIC_KEY: string
   STRIPE_SECRET_KEY: string
+  STRIPE_WEB_HOOK_SECRET: string
   APP_URL: string
 } = {
   PORT: Number(process.env.PORT) || 8080,
@@ -21,5 +22,6 @@ export const config: {
   AWS_BUCKET_REGION: String(process.env.AWS_BUCKET_REGION),
   STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY || '',
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || '',
+  STRIPE_WEB_HOOK_SECRET: process.env.STRIPE_WEB_HOOK_SECRET || '',
   APP_URL: process.env.APP_URL || 'http://localhost:3000',
 }
