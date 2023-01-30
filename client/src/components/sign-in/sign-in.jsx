@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import Layout from '../shared/layout';
 import { Formik } from 'formik';
+import { auth } from '../../firebase';
 import '../sign-up/sign-up.styles.scss';
 
 const validate = values => {
@@ -23,7 +24,22 @@ const SignIn = ({ history: { push } }) => {
     password: '',
   };
 
-  const handleSubmit = async () => {}
+  const handleSubmit = async (values, { setSubmitting }) => {
+    console.log('values', values);
+    const { email, password } = values;
+    try {
+      //signin with firebase
+      await auth.signInWithEmailAndPassword(email, password);
+      setSubmitting(false);
+      push('/shop');
+      
+    } catch (error) {
+      console.log('error', error);
+      setSubmitting(false);
+      setError(error);
+    }
+    
+  }
 
   return (
     <Layout>

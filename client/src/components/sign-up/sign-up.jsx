@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Layout from '../shared/layout';
 import { Formik } from 'formik';
-// import { auth, createUserProfileDocument } from '../../firebase';
+import { auth, createUserProfileDocument } from '../../firebase';
 import { withRouter } from 'react-router-dom';
 import './sign-up.styles.scss';
 
@@ -25,7 +25,20 @@ const SignUp = ({ history: { push } }) => {
     password: '',
   }
 
-  const handleSignUp = async () => {}
+  const handleSignUp = async (values, { setSubmitting }) => {
+    const { firstname, email, password } = values;
+
+    try {
+      const { user } = await auth.createUserWithEmailAndPassword(email, password)
+      await createUserProfileDocument(user, { displayName: firstname });
+      push('/shop');
+      setSubmitting(false);
+    } catch (error) {
+      console.log('error', error);
+      setSubmitting(false);
+      setError(error);
+    }
+  }
 
   return (
     <Layout>

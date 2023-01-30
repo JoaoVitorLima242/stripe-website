@@ -9,18 +9,24 @@ const UserContextProvider = ({ children }) => {
 
   useEffect(() => {
     const unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
-      if (userAuth) {
-        const userRef = await createUserProfileDocument(userAuth);
+      try {
+        if (userAuth) {
+          const userRef = await createUserProfileDocument(userAuth);
+  
+          userRef.onSnapshot(snapShot => {
+            setUser({
+              id: snapShot.id,
+              ...snapShot.data()
+            });
+            setLoading(false)
+          })
+        } else {
+          setUser(userAuth);
+          setLoading(false);
+        }
 
-        userRef.onSnapshot(snapShot => {
-          setUser({
-            id: snapShot.id,
-            ...snapShot.data()
-          });
-          setLoading(false)
-        })
-      } else {
-        setUser(userAuth);
+      } catch (err) {
+        console.log(err)
         setLoading(false);
       }
     });
