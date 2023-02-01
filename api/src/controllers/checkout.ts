@@ -13,6 +13,12 @@ type PaymentIntentBody = {
   receiptEmail: string
   shipping: Shipping
 }
+interface UpdatePaymentIntentRequest extends RequestWithCurrentUser {
+  body: {
+    paymentIntentId: string
+  }
+}
+
 class CheckoutControllers {
   public createCheckoutSession = async (
     req: RequestWithBody<createCheckoutBody>,
@@ -79,7 +85,10 @@ class CheckoutControllers {
         shipping,
       )
 
-      return res.status(200).json({ clientSecret: paymentIntent.client_secret })
+      return res.status(200).json({
+        clientSecret: paymentIntent.client_secret,
+        paymentIntentId: paymentIntent.id,
+      })
     } catch (error) {
       console.log(error)
       return res
@@ -104,6 +113,54 @@ class CheckoutControllers {
       return res
         .status(400)
         .json({ error: 'An error occured, unable to create setup intent' })
+    }
+  }
+
+  public getCards = async (req: RequestWithCurrentUser, res: Response) => {
+    try {
+      const { currentUser } = req
+
+      if (!currentUser) {
+        throw new Error()
+      }
+
+      const customer = (await stripe.getCustomer(currentUser.uid)) as Customer
+
+      const cards = await stripe.getCustomerCards(customer)
+
+      res.status(200).json(cards.data)
+    } catch (error) {
+      console.log(error)
+      res.status(400).json({ error: 'An error occured, unable to get cards' })
+    }
+  }
+
+  public updatePaymentIntent = async (
+    req: UpdatePaymentIntentRequest,
+    res: Response,
+  ) => {
+    try {
+      const {
+        currentUser,
+        body: { paymentIntentId },
+      } = req
+
+      if (!currentUser) {
+        throw new Error()
+      }
+      const customer = await stripe.getCustomer(currentUser.uid)
+
+      const paymentIntent = await stripe.updatePaymentIntent(
+        paymentIntentId,
+        customer.id,
+      )
+
+      return res.status(200).json({ clientSecret: paymentIntent.client_secret })
+    } catch (error) {
+      console.log(error)
+      res
+        .status(400)
+        .json({ error: 'An error occured, unable to update payment intent' })
     }
   }
 }

@@ -69,6 +69,15 @@ class Stripe {
     })
   }
 
+  public updatePaymentIntent = (
+    paymentIntentId: string,
+    customerId: string,
+  ) => {
+    return this.stripe.paymentIntents.update(paymentIntentId, {
+      customer: customerId,
+    })
+  }
+
   public createCustomer = async (userId: string) => {
     const userSnapshot = await firebase.db.collection('users').doc(userId).get()
     const { email } = userSnapshot.data() as User
@@ -94,11 +103,18 @@ class Stripe {
       return this.createCustomer(userId)
     }
 
-    return await this.stripe.customers.retrieve(stripeCustomerId)
+    return this.stripe.customers.retrieve(stripeCustomerId)
   }
 
-  public createSetupIntent = async (customer: Customer) => {
-    return await this.stripe.setupIntents.create({
+  public createSetupIntent = (customer: Customer) => {
+    return this.stripe.setupIntents.create({
+      customer: customer.id,
+    })
+  }
+
+  public getCustomerCards = (customer: Customer) => {
+    return this.stripe.paymentMethods.list({
+      type: 'card',
       customer: customer.id,
     })
   }

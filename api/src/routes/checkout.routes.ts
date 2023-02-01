@@ -6,11 +6,21 @@ const routes = Router()
 
 routes.post('/create-session', CheckoutControllers.createCheckoutSession)
 routes.post('/webhook', CheckoutControllers.webhook)
-routes.post('/payment-intent', CheckoutControllers.paymentIntent)
+routes.post('/create-payment-intent', CheckoutControllers.paymentIntent)
 routes.post(
-  '/setup-intent',
+  '/save-payment-method',
   firebase.validateUser,
   CheckoutControllers.setUpIntent,
+)
+routes.get(
+  '/payment-methods',
+  firebase.validateUser,
+  CheckoutControllers.setUpIntent,
+)
+routes.put(
+  '/update-payment-intent',
+  firebase.validateUser,
+  CheckoutControllers.updatePaymentIntent,
 )
 
 export default routes
