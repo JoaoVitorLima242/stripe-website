@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import Layout from '../shared/layout';
+import Layout from '../../shared/layout';
 
 const Canceled = ({ history }) => {
   return (
