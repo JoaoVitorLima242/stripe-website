@@ -3,6 +3,7 @@ import cors from 'cors'
 
 import IndexRoutes from '../routes/index.routes'
 import CheckoutRoutes from '../routes/checkout.routes'
+import firebase from '../services/firebase'
 
 class App {
   public express: express.Application
@@ -17,11 +18,12 @@ class App {
   private middlewares() {
     this.express.use(
       express.json({
-        verify: (req, res, buffer) => (req['rawBody'] = buffer),
+        verify: (req, _req, buffer) => (req['rawBody'] = buffer),
       }),
     )
     this.express.use(cors())
     this.express.use(express.static('uploads'))
+    this.express.use(firebase.decodeJWT)
   }
 
   private database() {}
