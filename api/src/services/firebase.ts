@@ -1,15 +1,24 @@
 import { NextFunction, Request, Response } from 'express'
 import firebaseAdmin from 'firebase-admin'
+import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier'
 
 export type User = {
   email: string
   stripeCustomerId: string
 }
+
+export interface RequestWithCurrentUser extends Request {
+  currentUser?: DecodedIdToken
+}
 class FirebaseServices {
   public db = firebaseAdmin.initializeApp().firestore()
   public auth = firebaseAdmin.initializeApp().auth()
 
-  public decodeJWT = async (req: any, res: Response, next: NextFunction) => {
+  public decodeJWT = async (
+    req: RequestWithCurrentUser,
+    res: Response,
+    next: NextFunction,
+  ) => {
     if (
       req.headers.authorization &&
       req.headers.authorization.startsWith('Bearer ')
@@ -27,7 +36,11 @@ class FirebaseServices {
     next()
   }
 
-  public validateUser = (req: any, res: Response, next: NextFunction) => {
+  public validateUser = (
+    req: RequestWithCurrentUser,
+    res: Response,
+    next: NextFunction,
+  ) => {
     const user = req.currentUser
 
     if (!user) {

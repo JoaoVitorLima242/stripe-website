@@ -1,8 +1,9 @@
 import { Request, Response } from 'express'
-import stripe, { LineItems, Shipping } from '../services/stripe'
+import stripe, { Customer, LineItems, Shipping } from '../services/stripe'
 import { RequestWithBody } from '../@types/express'
 import { calculateOrderAmount } from '../utils/calculates'
 import { cartItem } from '../@types/cartItem'
+import { RequestWithCurrentUser } from '../services/firebase'
 
 type createCheckoutBody = { lineItems: LineItems; customerEmail: string }
 
@@ -84,6 +85,25 @@ class CheckoutControllers {
       return res
         .status(400)
         .json({ error: 'An error occured, unable to create payment intent' })
+    }
+  }
+
+  public setUpIntent = async (req: RequestWithCurrentUser, res: Response) => {
+    const { currentUser } = req
+
+    if (!currentUser) {
+      throw new Error()
+    }
+    const customer = (await stripe.getCustomer(currentUser.uid)) as Customer
+
+    try {
+      const setupIntent = await stripe.createSetupIntent(customer)
+
+      return res.status(200).json(setupIntent)
+    } catch (error) {
+      return res
+        .status(400)
+        .json({ error: 'An error occured, unable to create setup intent' })
     }
   }
 }

@@ -6,6 +6,8 @@ import firebase, { User } from './firebase'
 export type LineItems = StripeApi.Checkout.SessionCreateParams.LineItem[]
 export type Shipping = StripeApi.PaymentIntentCreateParams.Shipping
 export type EventDataObj = StripeApi.Event.Data.Object
+export type Customer = StripeApi.Customer
+
 class Stripe {
   private stripe: StripeApi
   private domainUrl: string
@@ -91,9 +93,14 @@ class Stripe {
     if (!stripeCustomerId) {
       return this.createCustomer(userId)
     }
-    const customer = await this.stripe.customers.retrieve(stripeCustomerId)
 
-    return customer
+    return await this.stripe.customers.retrieve(stripeCustomerId)
+  }
+
+  public createSetupIntent = async (customer: Customer) => {
+    return await this.stripe.setupIntents.create({
+      customer: customer.id,
+    })
   }
 }
 
