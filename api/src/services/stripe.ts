@@ -1,6 +1,7 @@
 import StripeApi from 'stripe'
 
 import { config } from '../config/vars'
+import firebase, { User } from './firebase'
 
 export type LineItems = StripeApi.Checkout.SessionCreateParams.LineItem[]
 export type Shipping = StripeApi.PaymentIntentCreateParams.Shipping
@@ -64,6 +65,35 @@ class Stripe {
       receipt_email: receiptEmail,
       shipping,
     })
+  }
+
+  public createCustomer = async (userId: string) => {
+    const userSnapshot = await firebase.db.collection('users').doc(userId).get()
+    const { email } = userSnapshot.data() as User
+
+    const customer = await this.stripe.customers.create({
+      email,
+      metadata: {
+        firebaseUID: userId,
+      },
+    })
+
+    await userSnapshot.ref.update({ stripeCustomerId: customer.id })
+
+    return customer
+  }
+
+  public getCustomer = async (userId: string) => {
+    const userSnapshot = await firebase.db.collection('users').doc(userId).get()
+
+    const { stripeCustomerId } = userSnapshot.data() as User
+
+    if (!stripeCustomerId) {
+      return this.createCustomer(userId)
+    }
+    const customer = await this.stripe.customers.retrieve(stripeCustomerId)
+
+    return customer
   }
 }
 

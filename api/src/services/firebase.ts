@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from 'express'
 import firebaseAdmin from 'firebase-admin'
 
+export type User = {
+  email: string
+  stripeCustomerId: string
+}
 class FirebaseServices {
   public db = firebaseAdmin.initializeApp().firestore()
   public auth = firebaseAdmin.initializeApp().auth()
@@ -29,6 +33,8 @@ class FirebaseServices {
     if (!user) {
       return res.status(401).send()
     }
+
+    next()
   }
 }
 
