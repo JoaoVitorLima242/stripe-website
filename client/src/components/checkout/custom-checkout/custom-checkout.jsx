@@ -27,7 +27,7 @@ const CustomCheckout = ({ shipping, cartItems, history: { push } }) => {
     if (user) {
       const savedCards = async () => {
         try {
-          const cardsList = await fetchFromAPI('get-payment-methods', {
+          const cardsList = await fetchFromAPI('checkout/payment-methods', {
             method: 'GET',
           }); 
           setCards(cardsList);
@@ -52,7 +52,7 @@ const CustomCheckout = ({ shipping, cartItems, history: { push } }) => {
       }
 
       const customCheckout = async () => {
-        const { clientSecret, id } = await fetchFromAPI('create-payment-intent', {
+        const { clientSecret, id } = await fetchFromAPI('checkout/create-payment-intent', {
           body
         });
 
@@ -70,7 +70,7 @@ const CustomCheckout = ({ shipping, cartItems, history: { push } }) => {
     // check if user has selcted to save card
     if (saveCard) {
       // make to create a setup intent 
-      si = await fetchFromAPI('save-payment-method');
+      si = await fetchFromAPI('checkout/save-payment-method');
     }
     const payload = await stripe.confirmCardPayment(clientSecret, {
       payment_method: {
@@ -98,7 +98,7 @@ const CustomCheckout = ({ shipping, cartItems, history: { push } }) => {
   const savedCardCheckout = async () => {
     setProcessing(true);
     // update the payment intent to incude the customer parameter
-    const { clientSecret } = await fetchFromAPI('update-payment-intent', {
+    const { clientSecret } = await fetchFromAPI('checkout/update-payment-intent', {
       body: { paymentIntentId }, method: 'PUT',
     });
 

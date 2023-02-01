@@ -11,8 +11,9 @@ export interface RequestWithCurrentUser extends Request {
   currentUser?: DecodedIdToken
 }
 class FirebaseServices {
-  public db = firebaseAdmin.initializeApp().firestore()
-  public auth = firebaseAdmin.initializeApp().auth()
+  private firebase = firebaseAdmin.initializeApp()
+  public db = this.firebase.firestore()
+  public auth = this.firebase.auth()
 
   public decodeJWT = async (
     req: RequestWithCurrentUser,
